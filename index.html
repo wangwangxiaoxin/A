@@ -7,68 +7,75 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f5f5f5;
-            color: #333;
+            background-color: #f5f5f5; /* 背景颜色 */
+            color: #333; /* 字体颜色 */
+            margin: 0; /* 无外边距 */
+            padding: 0; /* 无内边距 */
         }
         .container {
-            width: 80%;
-            margin: 0 auto;
-            text-align: center;
-            padding: 20px;
-            background-color: #fff;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 90%;
+            max-width: 800px; /* 最大宽度 */
+            margin: 20px auto; /* 自动水平居中，并增加垂直间距 */
+            padding: 20px; /* 内边距 */
+            background-color: #fff; /* 背景颜色 */
+            border-radius: 10px; /* 圆角 */
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* 阴影 */
+        }
+        h1 {
+            font-size: 2em; /* 标题字体大小 */
+            color: #007bff; /* 标题颜色 */
+            margin-bottom: 20px; /* 标题下边距 */
         }
         #map {
-            width: 100%;
-            height: 400px;
-            margin-top: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+            width: 100%; /* 全宽 */
+            height: 400px; /* 固定高度 */
+            margin-top: 20px; /* 上边距 */
+            border-radius: 10px; /* 圆角 */
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1); /* 提供阴影 */
         }
         label {
-            font-size: 1.1em;
-            margin-top: 10px;
-            display: block;
+            font-size: 1.1em; /* 标签字体大小 */
+            margin-top: 10px; /* 标签上边距 */
+            display: block; /* 块级元素 */
         }
         input, select, button {
-            padding: 10px;
-            margin: 10px 0;
-            border-radius: 5px;
-            border: 1px solid #ccc;
-            width: calc(100% - 22px);
-            max-width: 400px;
+            padding: 10px; /* 内边距 */
+            margin: 10px 0; /* 上下外边距 */
+            border-radius: 5px; /* 圆角样式 */
+            border: 1px solid #ccc; /* 边框样式 */
+            width: calc(100% - 22px); /* 适应宽度 */
+            max-width: 400px; /* 最大宽度 */
         }
         button {
-            background-color: #007bff;
-            color: white;
-            border: none;
-            cursor: pointer;
-            transition: background-color 0.3s;
+            background-color: #007bff; /* 按钮背景色 */
+            color: white; /* 按钮字体颜色 */
+            border: none; /* 去掉边框 */
+            cursor: pointer; /* 鼠标样式 */
+            transition: background-color 0.3s; /* 背景色过渡效果 */
         }
         button:hover {
-            background-color: #0056b3;
+            background-color: #0056b3; /* 悬停背景色 */
         }
         #recommendation {
-            margin-top: 20px;
-            text-align: left;
-            max-width: 400px;
-            margin: 20px auto;
+            margin-top: 20px; /* 上边距 */
+            text-align: left; /* 左对齐 */
+            max-width: 400px; /* 最大宽度 */
+            margin: 20px auto; /* 居中 */
         }
         .restaurant {
-            cursor: pointer;
-            margin: 5px 0;
-            border: 1px solid #ccc;
-            padding: 10px;
-            border-radius: 5px;
-            background-color: #f9f9f9;
-            transition: background-color 0.3s;
+            cursor: pointer; /* 鼠标样式 */
+            margin: 5px 0; /* 上下外边距 */
+            border: 1px solid #ccc; /* 边框样式 */
+            padding: 10px; /* 内边距 */
+            border-radius: 5px; /* 圆角样式 */
+            background-color: #f9f9f9; /* 背景色 */
+            transition: background-color 0.3s; /* 背景色过渡 */
         }
         .restaurant:hover {
-            background-color: #e9ecef;
+            background-color: #e9ecef; /* 悬停时背景色 */
         }
     </style>
-    <script src="https://api.map.baidu.com/api?v=2.0&ak=qjQQFflV4zjoLUfVrhCXaYtiVjBW9xV5"></script> <!-- 替换为你的百度地图API密钥 -->
+    <script src="https://api.map.baidu.com/api?v=2.0&ak=YOUR_AK"></script> <!-- 替换为你的百度地图API密钥 -->
     <script>
         let map, userMarker;
         let userPoint;
@@ -126,8 +133,7 @@
                                 name: poi.title,
                                 lat: poi.point.lat,
                                 lng: poi.point.lng,
-                                rating: (Math.random() * 5).toFixed(1), // 随机评分示例
-                                address: poi.address // 存储地址信息供后用
+                                rating: (Math.random() * 5).toFixed(1) // 随机评分
                             });
                         }
 
@@ -149,7 +155,7 @@
                             const marker = new BMap.Marker(new BMap.Point(location.lng, location.lat));
                             map.addOverlay(marker); // 添加餐馆标记
 
-                            // 添加餐馆名称的标签
+                            // 显示餐馆名称的标签
                             const label = new BMap.Label(location.name, { offset: new BMap.Size(20, -10) });
                             marker.setLabel(label); // 将标签设置到标记上
                         });
@@ -170,8 +176,8 @@
         }
 
         function openRestaurantDetail(location) {
-            const detail = `餐馆名称: ${location.name}\n评分: ${location.rating}分\n地址: ${location.address}\n点击下面的链接查看详细信息。`;
-            const url = `https://www.baidu.com/s?wd=${encodeURIComponent(location.name + ' ' + location.address)}`;
+            const detail = `餐馆名称: ${location.name}\n评分: ${location.rating}分\n详细信息: 这是一家受欢迎的餐馆。`;
+            const url = `https://www.baidu.com/s?wd=${encodeURIComponent(location.name)}`;
             const confirmation = confirm(detail + "\n\n是否前往百度地图查看？");
 
             if (confirmation) {
@@ -208,7 +214,7 @@
 
     <div id="recommendation"></div>
 
-    <divdiv id="map"></div>
+    <div id="map"></div>
 </div>
 
 </body>
