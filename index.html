@@ -16,32 +16,43 @@
             height: 400px;
             margin-top: 20px;
         }
+        #recommendation {
+            margin-top: 20px;
+            text-align: left;
+        }
+        .restaurant {
+            cursor: pointer;
+            margin: 5px 0;
+            border: 1px solid #ccc;
+            padding: 10px;
+            border-radius: 5px;
+        }
     </style>
     <script src="https://api.map.baidu.com/api?v=2.0&ak=OJBGt2yi4vONc2bkAa82RrKlYE30ygMg"></script>
     <script>
         let map, marker;
         
-        // 定义真实存在的餐馆位置
+        // 定义真实存在的餐馆位置和评分
         const foodOptions = {
             "炒菜": [
-                {name: "中卫炒菜馆", lat: 37.5095, lng: 105.1935},
-                {name: "沙坡头炒菜馆", lat: 37.5135, lng: 105.2055}
+                {name: "中卫炒菜馆", lat: 37.5095, lng: 105.1935, rating: 4.5},
+                {name: "沙坡头炒菜馆", lat: 37.5135, lng: 105.2055, rating: 4.0}
             ],
             "烧烤": [
-                {name: "中卫烧烤摊", lat: 37.5115, lng: 105.1815},
-                {name: "沙坡头烧烤", lat: 37.5117, lng: 105.2005}
+                {name: "中卫烧烤摊", lat: 37.5115, lng: 105.1815, rating: 4.7},
+                {name: "沙坡头烧烤", lat: 37.5117, lng: 105.2005, rating: 4.3}
             ],
             "火锅": [
-                {name: "中卫火锅店", lat: 37.5105, lng: 105.1905},
-                {name: "沙坡头火锅店", lat: 37.5140, lng: 105.2020}
+                {name: "中卫火锅店", lat: 37.5105, lng: 105.1905, rating: 4.8},
+                {name: "沙坡头火锅店", lat: 37.5140, lng: 105.2020, rating: 4.6}
             ],
             "烤肉": [
-                {name: "中卫烤肉店", lat: 37.5097, lng: 105.1832},
-                {name: "沙坡头烤肉店", lat: 37.5180, lng: 105.2030}
+                {name: "中卫烤肉店", lat: 37.5097, lng: 105.1832, rating: 4.5},
+                {name: "沙坡头烤肉店", lat: 37.5180, lng: 105.2030, rating: 4.7}
             ],
             "牛肉面": [
-                {name: "中卫牛肉面馆", lat: 37.5090, lng: 105.1930},
-                {name: "沙坡头牛肉面馆", lat: 37.5130, lng: 105.2050}
+                {name: "中卫牛肉面馆", lat: 37.5090, lng: 105.1930, rating: 4.4},
+                {name: "沙坡头牛肉面馆", lat: 37.5130, lng: 105.2050, rating: 4.5}
             ]
         };
 
@@ -79,11 +90,18 @@
             clearMarkers(); // 清除旧标记
 
             if (selectedLocations && selectedLocations.length) {
-                selectedLocations.forEach(location => {
-                    recommendationDiv.innerHTML += `<div>${location.name} - 经度: ${location.lng}, 纬度: ${location.lat}</div>`;
+                selectedLocations.forEach((location, index) => {
+                    const restaurantDiv = document.createElement('div');
+                    restaurantDiv.className = 'restaurant';
+                    restaurantDiv.innerText = `${index + 1}. ${location.name} - 评分: ${location.rating}`;
+                    restaurantDiv.onclick = () => {
+                        openRestaurantDetail(location.name); // 点击餐馆时调用函数
+                    };
+
+                    recommendationDiv.appendChild(restaurantDiv);
 
                     const point = new BMap.Point(location.lng, location.lat);
-                    marker = new BMap.Marker(point);
+                    const marker = new BMap.Marker(point);
                     map.addOverlay(marker); // 添加餐馆标记
                 });
             } else {
@@ -92,27 +110,15 @@
             }
         }
 
+        function openRestaurantDetail(name) {
+            alert(`进入 ${name} 的详细信息页面`); // 模拟进入餐馆详情
+        }
+
         document.addEventListener('DOMContentLoaded', function () {
             initMap();
             document.getElementById('recommend-btn').onclick = function () {
                 console.log("获取推荐按钮被点击");
                 showRecommendation();
-            };
-
-            // 处理用户输入位置标记
-            document.getElementById('add-location-btn').onclick = function () {
-                const userLocation = document.getElementById('user-location').value;
-                // 进行地理编码
-                const geoc = new BMap.Geocoder();
-                geoc.getPoint(userLocation, (point) => {
-                    if (point) {
-                        map.centerAndZoom(point, 15); // 更新地图中心
-                        map.addOverlay(new BMap.Marker(point)); // 添加输入位置标记
-                        document.getElementById('recommendation').innerText = '已标记位置: ' + userLocation;
-                    } else {
-                        alert("未能找到该位置");
-                    }
-                });
             };
         });
     </script>
@@ -123,8 +129,7 @@
     <h1>宁夏中卫美食推荐</h1>
 
     <label for="user-location">手动输入您所在位置:</label>
-    <input type="text" id="user-location" placeholder="请输入位置，例如: 中卫"> 
-    <button id="add-location-btn">添加位置标记</button>
+    <input type="text" id="user-location" placeholder="请输入位置，例如: 中卫">
 
     <label for="food-type">选择想吃的食物:</label>
     <select id="food-type">
