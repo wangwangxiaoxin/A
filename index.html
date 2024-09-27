@@ -126,7 +126,8 @@
                                 name: poi.title,
                                 lat: poi.point.lat,
                                 lng: poi.point.lng,
-                                rating: (Math.random() * 5).toFixed(1) // 随机评分
+                                rating: (Math.random() * 5).toFixed(1), // 随机评分示例
+                                address: poi.address // 存储地址信息供后用
                             });
                         }
 
@@ -139,14 +140,18 @@
                             restaurantDiv.className = 'restaurant';
                             restaurantDiv.innerText = `${index + 1}. ${location.name} - 评分: ${location.rating}分`;
                             restaurantDiv.onclick = () => {
-                                openRestaurantDetail(location); // 点击餐馆时调用函数
                                 panToRestaurant(location); // 跳转地图位置
+                                openRestaurantDetail(location); // 弹出餐馆详情
                             };
 
                             recommendationDiv.appendChild(restaurantDiv);
 
                             const marker = new BMap.Marker(new BMap.Point(location.lng, location.lat));
                             map.addOverlay(marker); // 添加餐馆标记
+
+                            // 添加餐馆名称的标签
+                            const label = new BMap.Label(location.name, { offset: new BMap.Size(20, -10) });
+                            marker.setLabel(label); // 将标签设置到标记上
                         });
                     } else {
                         recommendationDiv.innerText = '未找到相关餐馆';
@@ -165,8 +170,13 @@
         }
 
         function openRestaurantDetail(location) {
-            const detail = `餐馆名称: ${location.name}\n评分: ${location.rating}分\n详细信息: 这是一家受欢迎的餐馆。`;
-            alert(detail); // 弹出餐馆的详细信息
+            const detail = `餐馆名称: ${location.name}\n评分: ${location.rating}分\n地址: ${location.address}\n点击下面的链接查看详细信息。`;
+            const url = `https://www.baidu.com/s?wd=${encodeURIComponent(location.name + ' ' + location.address)}`;
+            const confirmation = confirm(detail + "\n\n是否前往百度地图查看？");
+
+            if (confirmation) {
+                window.open(url, "_blank"); // 打开新标签页前往百度地图
+            }
         }
 
         document.addEventListener('DOMContentLoaded', function () {
@@ -198,7 +208,7 @@
 
     <div id="recommendation"></div>
 
-    <div id="map"></div>
+    <divdiv id="map"></div>
 </div>
 
 </body>
