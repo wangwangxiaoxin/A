@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>宁夏中卫美食推荐</title>
+    <title>美食推荐</title>
     <style>
         /* 基本样式 */
         .container {
@@ -28,32 +28,33 @@
             border-radius: 5px;
         }
     </style>
-    <script src="https://api.map.baidu.com/api?v=2.0&ak=OJBGt2yi4vONc2bkAa82RrKlYE30ygMg"></script>
+    <script src="https://api.map.baidu.com/api?v=2.0&ak=YOUR_AK"></script> <!-- 替换为你的百度地图API密钥 -->
     <script>
-        let map, userMarker, userPoint;
+        let map, userMarker;
+        let userPoint;
 
         function initMap() {
             map = new BMap.Map("map");
-            const defaultPoint = new BMap.Point(105.1823, 37.5079); // 默认中心点
-            map.centerAndZoom(defaultPoint, 12);
             map.enableScrollWheelZoom(true);
 
-            // 获取用户当前位置并标记
+            // 自动获取用户位置
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(position => {
                     userPoint = new BMap.Point(position.coords.longitude, position.coords.latitude);
                     map.centerAndZoom(userPoint, 15); // 将地图中心设为用户位置
-
-                    // 使用小猪的图案标记用户位置
-                    const pigIcon = new BMap.Icon("https://img.icons8.com/color/48/000000/pig.png", new BMap.Size(30, 30));
-                    userMarker = new BMap.Marker(userPoint, {icon: pigIcon});
-                    map.addOverlay(userMarker); // 用户位置标记
+                    addUserMarker(userPoint);
                 }, () => {
                     alert('无法获取位置信息。');
                 });
             } else {
                 alert('您的浏览器不支持地理定位。');
             }
+        }
+
+        function addUserMarker(point) {
+            const pigIcon = new BMap.Icon("https://img.icons8.com/color/48/000000/pig.png", new BMap.Size(30, 30));
+            userMarker = new BMap.Marker(point, {icon: pigIcon});
+            map.addOverlay(userMarker); // 用户位置标记
         }
 
         function clearMarkers() {
@@ -65,11 +66,9 @@
         }
 
         function showRecommendation() {
-            if (!userPoint) {
-                alert('请先获取用户位置。');
-                return;
-            }
+            const foodType = document.getElementById('food-type').value;
 
+            // 使用地理编码器获取餐馆信息
             const local = new BMap.LocalSearch(map, {
                 onSearchComplete: function(results) {
                     clearMarkers(); // 清空标记
@@ -80,13 +79,18 @@
                         const sortedResults = [];
                         for (let i = 0; i < results.getCurrentNumPois(); i++) {
                             const poi = results.getPoi(i);
-                            sortedResults.push({name: poi.title, lat: poi.point.lat, lng: poi.point.lng, rating: Math.random() * 5}); // 随机评分，仅为演示
+                            sortedResults.push({
+                                name: poi.title, 
+                                lat: poi.point.lat, 
+                                lng: poi.point.lng, 
+                                rating: Math.random() * 5 // 随机评分
+                            });
                         }
 
                         // 按评分排序，获取前5名
                         sortedResults.sort((a, b) => b.rating - a.rating);
                         const topRestaurants = sortedResults.slice(0, 5);
-                        
+
                         topRestaurants.forEach((location, index) => {
                             const restaurantDiv = document.createElement('div');
                             restaurantDiv.className = 'restaurant';
@@ -107,20 +111,19 @@
                 }
             });
 
-            // 执行搜索，搜索火锅
-            local.searchNearby('火锅', userPoint, 1000); // 在1公里范围内搜索
+            // 执行搜索，根据用户的位置搜索餐馆
+            const query = `${foodType}餐厅`;
+            local.searchNearby(query, userPoint, 1000); // 在1公里范围内搜索
         }
 
         function openRestaurantDetail(location) {
-            // 弹出餐馆详细信息
-            const detail = `餐馆名称: ${location.name}\n评分: ${location.rating.toFixed(1)}分\n详细信息: 这是一家受欢迎的火锅店。`;
-            alert(detail); // 或者使用模态框更好
+            const detail = `餐馆名称: ${location.name}\n评分: ${location.rating.toFixed(1)}分\n详细信息: 这是一家受欢迎的餐馆。`;
+            alert(detail); // 模拟进入餐馆详情
         }
 
         document.addEventListener('DOMContentLoaded', function () {
             initMap();
             document.getElementById('recommend-btn').onclick = function () {
-                console.log("获取推荐按钮被点击");
                 showRecommendation();
             };
         });
@@ -131,10 +134,16 @@
 <div class="container">
     <h1>宁夏中卫美食推荐</h1>
 
-    <label for="food-type">选择欲推荐的食物（火锅）:</label>
+    <label for="user-location">手动输入您所在位置:</label>
+    <input type="text" id="user-location" placeholder="请输入位置，例如: 中卫"> 
+
+    <label for="food-type">选择想吃的食物:</label>
     <select id="food-type">
+        <option value="粥">粥</option>
         <option value="火锅">火锅</option>
-        <!-- 这里可以根据需求添加更多选项 -->
+        <option value="炒菜">炒菜</option>
+        <option value="烤肉">烤肉</option>
+        <option value="烧烤">烧烤</option>
     </select>
 
     <button id="recommend-btn">获取推荐</button>
