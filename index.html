@@ -30,7 +30,31 @@
     </style>
     <script src="https://api.map.baidu.com/api?v=2.0&ak=OJBGt2yi4vONc2bkAa82RrKlYE30ygMg"></script>
     <script>
-        let map, marker;
+        let map, userMarker;
+
+        // 定义真实存在的餐馆位置和评分
+        const foodOptions = {
+            "炒菜": [
+                {name: "炒菜馆", lat: 37.5095, lng: 105.1935, rating: 4.5, detail: "这是中卫著名的炒菜馆，提供多种菜肴。"},
+                {name: "沙坡头炒菜馆", lat: 37.5135, lng: 105.2055, rating: 4.0, detail: "这里的炒菜口味独特，值得一试。"}
+            ],
+            "烧烤": [
+                {name: "烧烤摊", lat: 37.5115, lng: 105.1815, rating: 4.7, detail: "新鲜的食材和美味的调料，给你带来绝佳的烧烤体验。"},
+                {name: "沙坡头烧烤", lat: 37.5117, lng: 105.2005, rating: 4.3, detail: "这里的人气很旺，烧烤味道好。"}
+            ],
+            "火锅": [
+                {name: "火锅店", lat: 37.5105, lng: 105.1905, rating: 4.8, detail: "火锅底料丰富，口味地道，是聚会的好去处。"},
+                {name: "沙坡头火锅店", lat: 37.5140, lng: 105.2020, rating: 4.6, detail: "这里的火锅种类繁多，适合各类食客。"}
+            ],
+            "烤肉": [
+                {name: "烤肉店", lat: 37.5097, lng: 105.1832, rating: 4.5, detail: "品种丰富，环境舒适，是朋友聚会的最佳选择。"},
+                {name: "沙坡头烤肉店", lat: 37.5180, lng: 105.2030, rating: 4.7, detail: "这里的烤肉味道鲜美，受大家的喜爱。"}
+            ],
+            "牛肉面": [
+                {name: "牛肉面馆", lat: 37.5090, lng: 105.1930, rating: 4.4, detail: "牛肉面汤底浓郁，面条筋道，广受欢迎。"},
+                {name: "沙坡头牛肉面馆", lat: 37.5130, lng: 105.2050, rating: 4.5, detail: "这里的牛肉面传统且富有特色。"}
+            ]
+        };
 
         function initMap() {
             map = new BMap.Map("map");
@@ -43,7 +67,11 @@
                 navigator.geolocation.getCurrentPosition(position => {
                     const userPoint = new BMap.Point(position.coords.longitude, position.coords.latitude);
                     map.centerAndZoom(userPoint, 15); // 将地图中心设为用户位置
-                    map.addOverlay(new BMap.Marker(userPoint)); // 用户位置标记
+
+                    // 使用小猪的图案标记用户位置
+                    const pigIcon = new BMap.Icon("https://img.icons8.com/color/48/000000/pig.png", new BMap.Size(30, 30));
+                    userMarker = new BMap.Marker(userPoint, {icon: pigIcon});
+                    map.addOverlay(userMarker); // 用户位置标记
                 }, () => {
                     alert('无法获取位置信息。');
                 });
@@ -55,44 +83,43 @@
         function clearMarkers() {
             // 移除所有的标记
             map.clearOverlays();
+            if (userMarker) {
+                map.addOverlay(userMarker); // 重新添加用户标记
+            }
         }
 
         function showRecommendation() {
             const foodType = document.getElementById('food-type').value;
+            const selectedLocations = foodOptions[foodType];
 
-            // 使用地理编码器获取餐馆信息（演示代码，实际需接入真实API）
-            const local = new BMap.LocalSearch(map, {
-                onSearchComplete: function(results) {
-                    clearMarkers();
-                    const recommendationDiv = document.getElementById('recommendation');
-                    recommendationDiv.innerHTML = ''; // 清空之前的推荐
+            const recommendationDiv = document.getElementById('recommendation');
+            recommendationDiv.innerHTML = ''; // 清空之前的推荐
+            clearMarkers(); // 清除旧标记
 
-                    if (local.getStatus() === BMAP_STATUS_SUCCESS) {
-                        for (let i = 0; i < Math.min(results.getCurrentNumPois(), 5); i++) {
-                            const poi = results.getPoi(i);
-                            const restaurantDiv = document.createElement('div');
-                            restaurantDiv.className = 'restaurant';
-                            restaurantDiv.innerText = `${i + 1}. ${poi.title} - 地址: ${poi.address}`;
-                            restaurantDiv.onclick = () => {
-                                openRestaurantDetail(poi.title); // 点击餐馆时调用函数
-                            };
-                            recommendationDiv.appendChild(restaurantDiv);
+            if (selectedLocations && selectedLocations.length) {
+                selectedLocations.forEach((location, index) => {
+                    const restaurantDiv = document.createElement('div');
+                    restaurantDiv.className = 'restaurant';
+                    restaurantDiv.innerText = `${index + 1}. ${location.name} - 评分: ${location.rating}`;
+                    restaurantDiv.onclick = () => {
+                        openRestaurantDetail(location); // 点击餐馆时调用函数
+                    };
 
-                            const point = new BMap.Point(poi.point.lng, poi.point.lat);
-                            const marker = new BMap.Marker(point);
-                            map.addOverlay(marker); // 添加餐馆标记
-                        }
-                    } else {
-                        recommendationDiv.innerText = '未找到相关餐馆';
-                    }
-                }
-            });
+                    recommendationDiv.appendChild(restaurantDiv);
 
-            local.search(`${foodType}餐厅`); // 搜索对应食物类型的餐馆
+                    const point = new BMap.Point(location.lng, location.lat);
+                    const marker = new BMap.Marker(point);
+                    map.addOverlay(marker); // 添加餐馆标记
+                });
+            } else {
+                console.error("没有找到推荐的餐厅！");
+                recommendationDiv.innerText = '没有推荐信息';
+            }
         }
 
-        function openRestaurantDetail(name) {
-            alert(`进入 ${name} 的详细信息页面`); // 模拟进入餐馆详情
+        function openRestaurantDetail(location) {
+            const detail = `餐馆名称: ${location.name}\n评分: ${location.rating}\n详情: ${location.detail}`;
+            alert(detail); // 弹出餐馆详细信息
         }
 
         document.addEventListener('DOMContentLoaded', function () {
@@ -100,7 +127,7 @@
             document.getElementById('recommend-btn').onclick = function () {
                 console.log("获取推荐按钮被点击");
                 showRecommendation();
-                       };
+            };
         });
     </script>
 </head>
@@ -110,7 +137,7 @@
     <h1>宁夏中卫美食推荐</h1>
 
     <label for="user-location">手动输入您所在位置:</label>
-    <input type="text" id="user-location" placeholder="请输入位置，例如: 中卫"> 
+    <input type="text" id id="user-location" placeholder="请输入位置，例如: 中卫">
 
     <label for="food-type">选择想吃的食物:</label>
     <select id="food-type">
