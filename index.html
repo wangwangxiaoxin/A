@@ -4,78 +4,41 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>美食推荐</title>
+    <!-- 引入 Ant Design CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/antd/4.16.13/antd.min.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/17.0.2/umd/react.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/17.0.2/umd/react-dom.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/antd/4.16.13/antd.min.js"></script>
+
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f55f5f5; /* 背景颜色 */
-            margin: 0; /* 去除默认外边距 */
-            padding: 0; /* 去除默认内边距 */
+            background-color: #f5f5f5;
+            color: #333;
         }
         .container {
-            max-width: 800px; /* 最大宽度 */
-            margin: 20px auto; /* 垂直和水平居中 */
-            padding: 20px; /* 内边距 */
-            background-color: #fff; /* 背景颜色 */
-            border-radius: 10px; /* 圆角 */
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* 阴影效果 */
-            display: flex; /* 使用Flexbox布局 */
-            flex-direction: column; /* 垂直排列 */
-            align-items: center; /* 水平居中 */
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
         h1 {
-            font-size: 2em; /* 标题字体大小 */
-            color: #007bff; /* 标题颜色 */
-            margin-bottom: 20px; /* 下边距 */
+            font-size: 2em;
+            color: #007bff;
+            margin-bottom: 20px; 
+            text-align: center;
         }
         #map {
-            width: 100%; /* 全宽 */
-            height: 400px; /* 固定高度 */
-            margin-top: 20px; /* 上边距 */
-            border-radius: 10px; /* 圆角 */
-            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1); /* 阴影效果 */
-        }
-        label {
-            font-size: 1.1em; /* 标签字体大小 */
-            margin-top: 10px; /* 上边距 */
-            display: block; /* 使其占据一行 */
-        }
-        input, select, button {
-            width: 100%; /* 宽度100% */
-            max-width: 400px; /* 限制最大宽度 */
-            padding: 10px; /* 内边距 */
-            margin: 10px 0; /* 上下外边距 */
-            border-radius: 5px; /* 圆角 */
-            border: 1px solid #ccc; /* 边框样式 */
-        }
-        button {
-            background-color: #007bff; /* 按钮背景色 */
-            color: white; /* 按钮字体颜色 */
-            border: none; /* 去掉边框 */
-            cursor: pointer; /* 鼠标样式 */
-            transition: background-color 0.3s; /* 背景颜色过渡效果 */
-        }
-        button:hover {
-            background-color: #0056b3; /* 悬停时按钮的背景颜色 */
-        }
-        #recommendation {
-            margin-top: 20px; /* 上边距 */
-            text-align: left; /* 左对齐 */
-            width: 100%; /* 宽度100% */
-            max-width: 400px; /* 限制最大宽度 */
-        }
-        .restaurant {
-            cursor: pointer; /* 鼠标样式 */
-            padding: 10px; /* 内边距 */
-            border: 1px solid #ccc; /* 边框样式 */
-            border-radius: 5px; /* 圆角 */
-            background-color: #f9f9f9; /* 背景颜色 */
-            margin: 5px 0; /* 上下外边距 */
-            transition: background-color 0.3s; /* 背景色过渡 */
-        }
-        .restaurant:hover {
-            background-color: #e9ecef; /* 悬停时背景颜色 */
+            width: 100%;
+            height: 400px;
+            margin-top: 20px;
+            border-radius: 10px; 
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
         }
     </style>
+    
     <script src="https://api.map.baidu.com/api?v=2.0&ak=qjQQFflV4zjoLUfVrhCXaYtiVjBW9xV5"></script> <!-- 替换为你的百度地图API密钥 -->
     <script>
         let map, userMarker;
@@ -195,11 +158,8 @@
 <div class="container">
     <h1>美食推荐</h1>
 
-    <label for="user-location">手动输入您所在位置:</label>
-    <input type="text" id="user-location" placeholder="请输入位置，例如: 中卫"> 
-
     <label for="food-type">选择想吃的食物:</label>
-    <select id="food-type">
+    <select id="food-type" class="ant-select">
         <option value="粥">粥</option>
         <option value="火锅">火锅</option>
         <option value="炒菜">炒菜</option>
@@ -207,7 +167,7 @@
         <option value="烧烤">烧烤</option>
     </select>
 
-    <button id="recommend-btn">获取推荐</button>
+    <button id="recommend-btn" class="ant-btn ant-btn-primary">获取推荐</button>
 
     <div id="recommendation"></div>
 
