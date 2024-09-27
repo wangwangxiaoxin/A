@@ -5,66 +5,68 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>美食推荐</title>
     <style>
+        /* 基本样式 */
         body {
-            font-family: Arial, sans-serif; /* 使用更现代的字体 */
-            background-color: #f5f5f5; /* 页面背景颜色 */
-            color: #333; /* 字体颜色 */
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
         }
         .container {
             width: 80%;
             margin: 0 auto;
             text-align: center;
             padding: 20px;
-            background-color: #fff; /* 容器背景色 */
-            border-radius: 10px; /* 圆角样式 */
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* 阴影效果 */
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
         #map {
             width: 100%;
             height: 400px;
             margin-top: 20px;
-            border-radius: 10px; /* 圆角样式 */
-            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1); /* 阴影效果 */
+            border-radius: 10px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
         }
         label {
-            font-size: 1.1em; /* 标签字体大小 */
+            font-size: 1.1em;
             margin-top: 10px;
-            display: block; /* 使标签占一行 */
+            display: block;
         }
         input, select, button {
             padding: 10px;
             margin: 10px 0;
-            border-radius: 5px; /* 圆角样式 */
-            border: 1px solid #ccc; /* 边框样式 */
-            width: calc(100% - 22px); /* 适配宽度，包括padding */
-            max-width: 400px; /* 限制最大宽度 */
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            width: calc(100% - 22px);
+            max-width: 400px;
         }
         button {
-            background-color: #007bff; /* 按钮背景色 */
-            color: white; /* 按钮字体颜色 */
-            border: none; /* 去除边框 */
-            cursor: pointer; /* 鼠标指针变为手型 */
-            transition: background-color 0.3s; /* 背景颜色过渡效果 */
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s;
         }
         button:hover {
-            background-color: #0056b3; /* 鼠标悬停时的颜色 */
+            background-color: #0056b3;
         }
         #recommendation {
             margin-top: 20px;
             text-align: left;
-            max-width: 400px; /* 限制推荐区域的宽度 */
-            margin: 20px auto; /* 居中 */
+            max-width: 400px;
+            margin: 20px auto;
         }
         .restaurant {
+            cursor: pointer;
             margin: 5px 0;
             border: 1px solid #ccc;
             padding: 10px;
             border-radius: 5px;
-            background-color: #f9f9f9; /* 餐馆推荐背景色 */
-            transition: background-color 0.3s; /* 背景色过渡 */
+            background-color: #f9f9f9;
+            transition: background-color 0.3s;
         }
         .restaurant:hover {
-            background-color: #e9ecef; /* 餐馆推荐悬停时改变背景 */
+            background-color: #e9ecef;
         }
     </style>
     <script src="https://api.map.baidu.com/api?v=2.0&ak=qjQQFflV4zjoLUfVrhCXaYtiVjBW9xV5"></script> <!-- 替换为你的百度地图API密钥 -->
@@ -108,7 +110,7 @@
                 alert('请先获取用户位置。');
                 return;
             }
-            
+
             const foodType = document.getElementById('food-type').value;
             const local = new BMap.LocalSearch(map, {
                 onSearchComplete: function(results) {
@@ -121,9 +123,9 @@
                         for (let i = 0; i < results.getCurrentNumPois(); i++) {
                             const poi = results.getPoi(i);
                             sortedResults.push({
-                                name: poi.title, 
-                                lat: poi.point.lat, 
-                                lng: poi.point.lng, 
+                                name: poi.title,
+                                lat: poi.point.lat,
+                                lng: poi.point.lng,
                                 rating: (Math.random() * 5).toFixed(1) // 随机评分
                             });
                         }
@@ -138,12 +140,11 @@
                             restaurantDiv.innerText = `${index + 1}. ${location.name} - 评分: ${location.rating}分`;
                             restaurantDiv.onclick = () => {
                                 openRestaurantDetail(location); // 点击餐馆时调用函数
+                                panToRestaurant(location); // 跳转到餐馆位置
                             };
-
                             recommendationDiv.appendChild(restaurantDiv);
 
-                            const point = new BMap.Point(location.lng, location.lat);
-                            const marker = new BMap.Marker(point);
+                            const marker = new BMap.Marker(new BMap.Point(location.lng, location.lat));
                             map.addOverlay(marker); // 添加餐馆标记
                         });
                     } else {
@@ -162,6 +163,11 @@
             alert(detail); // 弹出餐馆的详细信息
         }
 
+        function panToRestaurant(location) {
+            const point = new BMap.Point(location.lng, location.lat);
+            map.panTo(point); // 跳转地图中心到餐馆位置
+        }
+
         document.addEventListener('DOMContentLoaded', function () {
             initMap();
             document.getElementById('recommend-btn').onclick = function () {
@@ -174,6 +180,9 @@
 
 <div class="container">
     <h1>美食推荐</h1>
+
+    <label for="user-location">手动输入您所在位置:</label>
+    <input type="text" id="user-location" placeholder="请输入位置，例如: 中卫"> 
 
     <label for="food-type">选择想吃的食物:</label>
     <select id="food-type">
