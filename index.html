@@ -5,30 +5,69 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>美食推荐</title>
     <style>
-        /* 基本样式 */
+        body {
+            font-family: Arial, sans-serif; /* 使用更现代的字体 */
+            background-color: #f5f5f5; /* 页面背景颜色 */
+            color: #333; /* 字体颜色 */
+        }
         .container {
             width: 80%;
             margin: 0 auto;
             text-align: center;
+            padding: 20px;
+            background-color: #fff; /* 容器背景色 */
+            border-radius: 10px; /* 圆角样式 */
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* 阴影效果 */
         }
         #map {
             width: 100%;
             height: 400px;
             margin-top: 20px;
+            border-radius: 10px; /* 圆角样式 */
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1); /* 阴影效果 */
+        }
+        label {
+            font-size: 1.1em; /* 标签字体大小 */
+            margin-top: 10px;
+            display: block; /* 使标签占一行 */
+        }
+        input, select, button {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px; /* 圆角样式 */
+            border: 1px solid #ccc; /* 边框样式 */
+            width: calc(100% - 22px); /* 适配宽度，包括padding */
+            max-width: 400px; /* 限制最大宽度 */
+        }
+        button {
+            background-color: #007bff; /* 按钮背景色 */
+            color: white; /* 按钮字体颜色 */
+            border: none; /* 去除边框 */
+            cursor: pointer; /* 鼠标指针变为手型 */
+            transition: background-color 0.3s; /* 背景颜色过渡效果 */
+        }
+        button:hover {
+            background-color: #0056b3; /* 鼠标悬停时的颜色 */
         }
         #recommendation {
             margin-top: 20px;
             text-align: left;
+            max-width: 400px; /* 限制推荐区域的宽度 */
+            margin: 20px auto; /* 居中 */
         }
         .restaurant {
-            cursor: pointer;
             margin: 5px 0;
             border: 1px solid #ccc;
             padding: 10px;
             border-radius: 5px;
+            background-color: #f9f9f9; /* 餐馆推荐背景色 */
+            transition: background-color 0.3s; /* 背景色过渡 */
+        }
+        .restaurant:hover {
+            background-color: #e9ecef; /* 餐馆推荐悬停时改变背景 */
         }
     </style>
-    <script src="https://api.map.baidu.com/api?v=2.0&ak=qjQQFflV4zjoLUfVrhCXaYtiVjBW9xV5"></script> <!-- 替换为你的百度地图API密钥 -->
+    <script src="https://api.map.baidu.com/api?v=2.0&ak=YOUR_AK"></script> <!-- 替换为你的百度地图API密钥 -->
     <script>
         let map, userMarker;
         let userPoint;
@@ -106,10 +145,6 @@
                             const point = new BMap.Point(location.lng, location.lat);
                             const marker = new BMap.Marker(point);
                             map.addOverlay(marker); // 添加餐馆标记
-
-                            // 添加餐馆名称标签
-                            const label = new BMap.Label(location.name, {offset: new BMap.Size(20, -10)});
-                            marker.setLabel(label); // 将标签设置到标记上
                         });
                     } else {
                         recommendationDiv.innerText = '未找到相关餐馆';
@@ -137,7 +172,7 @@
 </head>
 <body>
 
-<div class="containercontainer">
+<div class="container">
     <h1>美食推荐</h1>
 
     <label for="food-type">选择想吃的食物:</label>
